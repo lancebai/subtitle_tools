@@ -40,6 +40,7 @@ class SubtitleDownloader:
         raise NotImplementedError("Subclass must implement abstract method")
 
 
+
 class XmpSubtitleDownloader(SubtitleDownloader):
     def __init__(self, video_name):
         self.xmp_binary = xmp_exe
@@ -50,6 +51,7 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         self.pooling_interval = 5
         self.subtitle_filename = None
         self.thread_handle = None
+        self.download_timeout = 30
 
     def prepare(self):
         #blow up the subtitle directory 
@@ -61,8 +63,11 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         subtitle_list = self.original_list
 
         #compare the list
-        while cmp(subtitle_list, self.original_list) == 0 :
-            # print "wait for %d sec\n" %(self.pooling_interval,),
+        time_lapsed = 0
+        print "thread:__wait_till_subtile_downloaded"
+        while cmp(subtitle_list, self.original_list) == 0 and time_lapsed < self.download_timeout :
+            print "wait for %d sec\n" %(self.pooling_interval,),
+            time_lapsed += self.pooling_interval 
             time.sleep(self.pooling_interval)
             subtitle_list = os.listdir(subtitle_download_folder)
             # print cmp(subtitle_list, self.original_list)
@@ -74,9 +79,12 @@ class XmpSubtitleDownloader(SubtitleDownloader):
 
 
     def download_subtitle(self):
-        subprocess.call([self.xmp_binary, self.video_name])
+        subprocess.Popen([self.xmp_binary, self.video_name])
+        print "before create thread"
         self.thread_handle = threading.Thread(target=self.__wait_till_subtile_downloaded)
+        self.thread_handle.daemon = True
         self.thread_handle.start()
+        print "thread started!"
 
     def get_downloaded_subtile(self):
         if self.subtitle_filename is None:
@@ -85,7 +93,9 @@ class XmpSubtitleDownloader(SubtitleDownloader):
             
     #TODO: kill the xmp player
     def kill_xmp_player(self):
-        raise NotImplementedError("not implemented yet")
+        print "killing xmp player proccess"
+        subprocess.call([ "taskkill" ,"/IM", "XMP.exe", "/F" ])
+        # raise NotImplementedError("not implemented yet")
 
 
 
