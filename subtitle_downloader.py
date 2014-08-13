@@ -38,6 +38,8 @@ class SubtitleDownloader:
         raise NotImplementedError("Subclass must implement abstract method")
     def get_downloaded_subtile(self):
         raise NotImplementedError("Subclass must implement abstract method")
+    def finish(self):
+        raise NotImplementedError("Subclass must implement abstract method")
 
 
 
@@ -73,9 +75,10 @@ class XmpSubtitleDownloader(SubtitleDownloader):
             # print cmp(subtitle_list, self.original_list)
         # print "subtitle has been downloaded", subtitle_list,  
         # TODO:fill subtitle_filename
-        self.subtitle_filename = subtitle_download_folder+subtitle_list[0]
-        self.subtitle_filename += "\\" 
-        self.subtitle_filename += os.listdir(self.subtitle_filename)[0]
+        if subtitle_list is not None:
+            self.subtitle_filename = subtitle_download_folder+subtitle_list[0]
+            self.subtitle_filename += "\\" 
+            self.subtitle_filename += os.listdir(self.subtitle_filename)[0]
 
 
     def download_subtitle(self):
@@ -92,7 +95,7 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         return self.subtitle_filename
             
     #TODO: kill the xmp player
-    def kill_xmp_player(self):
+    def finish(self):
         print "killing xmp player proccess"
         subprocess.call([ "taskkill" ,"/IM", "XMP.exe", "/F" ])
         # raise NotImplementedError("not implemented yet")
