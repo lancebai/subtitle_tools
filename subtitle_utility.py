@@ -43,7 +43,7 @@ def download_subtitle(video_filename):
     # fileName, fileExtension = os.path.splitext(downloaded_srt)
     tmp_file = splitext(basename(video_filename))[0] + splitext(downloaded_srt)[1]
     copyfile(xmp_downloader.get_downloaded_subtile(), os.path.dirname(os.path.realpath(video_filename))+ "//" +tmp_file)
-    xmp_downloader.kill_xmp_player()
+    xmp_downloader.finish()
     convertFile(tmp_file)
 
 
