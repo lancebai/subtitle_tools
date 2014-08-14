@@ -25,7 +25,7 @@ def parse_dir():
 
 
 
-def download_subtitle_in_dir(dir_name):
+def download_subtitles_in_dir(dir_name):
     try:
         file_list = os.listdir(dir_name)
         for video_filename in file_list:
@@ -38,20 +38,22 @@ def download_subtitle(video_filename):
     xmp_downloader.prepare()
     xmp_downloader.download_subtitle()
     downloaded_srt = xmp_downloader.get_downloaded_subtile()
-    print "subtitle downloaded : ", downloaded_srt 
-    # check_subtitle_folder()
-    # fileName, fileExtension = os.path.splitext(downloaded_srt)
-    tmp_file = splitext(basename(video_filename))[0] + splitext(downloaded_srt)[1]
-    copyfile(xmp_downloader.get_downloaded_subtile(), os.path.dirname(os.path.realpath(video_filename))+ "//" +tmp_file)
-    xmp_downloader.finish()
-    convertFile(tmp_file)
+    # only carry on when subtitle has been downloaded!
+    if downloaded_srt is not None :
+        print "subtitle downloaded : ", downloaded_srt 
+        # check_subtitle_folder()
+        # fileName, fileExtension = os.path.splitext(downloaded_srt)
+        tmp_file = splitext(basename(video_filename))[0] + splitext(downloaded_srt)[1]
+        copyfile(xmp_downloader.get_downloaded_subtile(), os.path.dirname(os.path.realpath(video_filename))+ "//" +tmp_file)
+        xmp_downloader.finish()
+        convertFile(tmp_file)
 
 
 def main() :
     print "main function"
     # download_subtitle(test_video)
-    # download_subtitle_in_dir("c:\\test_dvd\\")
-    download_subtitle_in_dir(parse_dir())
+    # download_subtitles_in_dir("c:\\test_dvd\\")
+    download_subtitles_in_dir(parse_dir())
     print "done!"
 
 if __name__ == "__main__":
