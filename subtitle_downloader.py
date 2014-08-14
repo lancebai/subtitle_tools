@@ -75,7 +75,8 @@ class XmpSubtitleDownloader(SubtitleDownloader):
             # print cmp(subtitle_list, self.original_list)
         # print "subtitle has been downloaded", subtitle_list,  
         # TODO:fill subtitle_filename
-        if subtitle_list is not None:
+        # print subtitle_list
+        if subtitle_list:
             self.subtitle_filename = subtitle_download_folder+subtitle_list[0]
             self.subtitle_filename += "\\" 
             self.subtitle_filename += os.listdir(self.subtitle_filename)[0]
