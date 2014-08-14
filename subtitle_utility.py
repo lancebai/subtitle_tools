@@ -20,21 +20,23 @@ def parse_dir():
     parser = argparse.ArgumentParser()
     parser.add_argument("dir", help="file containing video clips",
                         type=str)
+    parser.add_argument("-t", "--timeout", help="waiting timeout",
+                        type=int)
     args = parser.parse_args()
-    return args.dir
+    return args.dir, args.timeout
 
 
 
-def download_subtitles_in_dir(dir_name):
+def download_subtitles_in_dir(dir_name, timeout):
     try:
         file_list = os.listdir(dir_name)
         for video_filename in file_list:
-            download_subtitle(dir_name+video_filename) 
+            download_subtitle(dir_name+video_filename, timeout) 
     except IOError:
         print "failed to open directory", dir_name, 
     
-def download_subtitle(video_filename):
-    xmp_downloader = XmpSubtitleDownloader(video_filename)
+def download_subtitle(video_filename, timeout):
+    xmp_downloader = XmpSubtitleDownloader(video_filename, timeout)
     xmp_downloader.prepare()
     xmp_downloader.download_subtitle()
     downloaded_srt = xmp_downloader.get_downloaded_subtile()
@@ -46,14 +48,22 @@ def download_subtitle(video_filename):
         tmp_file = splitext(basename(video_filename))[0] + splitext(downloaded_srt)[1]
         copyfile(xmp_downloader.get_downloaded_subtile(), os.path.dirname(os.path.realpath(video_filename))+ "//" +tmp_file)
         xmp_downloader.finish()
+        print "going to conver", tmp_file
         convertFile(tmp_file)
+        
 
 
 def main() :
     print "main function"
     # download_subtitle(test_video)
     # download_subtitles_in_dir("c:\\test_dvd\\")
-    download_subtitles_in_dir(parse_dir())
+    args = parse_dir()
+    print args
+    if args[1] is None:
+        timeout = 15
+    else:
+        timeout = args[1]
+    download_subtitles_in_dir(args[0], timeout)
     print "done!"
 
 if __name__ == "__main__":

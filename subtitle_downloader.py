@@ -25,11 +25,12 @@ subtitle_download_folder = r'C:\Documents and Settings\All Users\Application Dat
 #####################
 
 class SubtitleDownloader:
-    def __init__(self, video_name):
+    def __init__(self, video_name, download_timeout):
         print "base class init"
         self.video_name = video_name
         self.complete = False
         self.subtitle_filename = None
+        self.download_timeout = download_timeout
     def prepare(self):
         #blow up the subtitle directory
         raise NotImplementedError("Subclass must implement abstract method")
@@ -42,6 +43,14 @@ class SubtitleDownloader:
         raise NotImplementedError("Subclass must implement abstract method")
 
 
+# def xmpIsRunning():
+#     import win32ui
+#     # may need FindWindow("iTunes", None) or FindWindow(None, "iTunes")
+#     # or something similar
+#     if FindWindow("xmp", "xmp"):
+#         print "Found an xmp window"
+#         return True
+#     return False   
 
 class XmpSubtitleDownloader(SubtitleDownloader):
     def __init__(self, video_name, download_timeout=15):
@@ -54,7 +63,7 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         self.subtitle_filename = None
         self.thread_handle = None
         self.download_timeout = download_timeout
-
+ 
     def prepare(self):
         #blow up the subtitle directory 
         if os.path.isdir(subtitle_download_folder):
@@ -68,6 +77,7 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         time_lapsed = 0
         print "thread:__wait_till_subtile_downloaded"
         while cmp(subtitle_list, self.original_list) == 0 and time_lapsed < self.download_timeout :
+            # print "xmp is running", xmpIsRunning()
             print "has been waiting for %d sec\n" %(time_lapsed,),
             time_lapsed += self.pooling_interval 
             time.sleep(self.pooling_interval)
