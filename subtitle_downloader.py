@@ -82,7 +82,7 @@ class XmpSubtitleDownloader(SubtitleDownloader):
             time_lapsed += self.pooling_interval 
             time.sleep(self.pooling_interval)
             subtitle_list = os.listdir(subtitle_download_folder)
-            print subtitle_list, time_lapsed, cmp(subtitle_list, self.original_list), time_lapsed < self.download_timeout
+
             # print cmp(subtitle_list, self.original_list)
         # print "subtitle has been downloaded", subtitle_list,  
         # TODO:fill subtitle_filename
