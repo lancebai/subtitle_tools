@@ -44,7 +44,7 @@ class SubtitleDownloader:
 
 
 class XmpSubtitleDownloader(SubtitleDownloader):
-    def __init__(self, video_name):
+    def __init__(self, video_name, download_timeout=15):
         self.xmp_binary = xmp_exe
         self.video_name = video_name
         self.original_list = []
@@ -53,7 +53,7 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         self.pooling_interval = 5
         self.subtitle_filename = None
         self.thread_handle = None
-        self.download_timeout = 15
+        self.download_timeout = download_timeout
 
     def prepare(self):
         #blow up the subtitle directory 
