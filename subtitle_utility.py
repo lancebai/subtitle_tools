@@ -46,7 +46,8 @@ def download_subtitle(video_filename, timeout):
         # check_subtitle_folder()
         # fileName, fileExtension = os.path.splitext(downloaded_srt)
         tmp_file = splitext(basename(video_filename))[0] + splitext(downloaded_srt)[1]
-        copyfile(xmp_downloader.get_downloaded_subtile(), os.path.dirname(os.path.realpath(video_filename))+ "//" +tmp_file)
+        tmp_file = os.path.dirname(os.path.realpath(video_filename))+ "\\" + tmp_file
+        copyfile(xmp_downloader.get_downloaded_subtile(), tmp_file)
         xmp_downloader.finish()
         print "going to conver", tmp_file
         convertFile(tmp_file)
