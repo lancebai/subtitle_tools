@@ -47,13 +47,13 @@ class XmpSubtitleDownloader(SubtitleDownloader):
     def __init__(self, video_name):
         self.xmp_binary = xmp_exe
         self.video_name = video_name
-        self.original_list = None
+        self.original_list = []
         # print self.original_list
         self.complete = False
         self.pooling_interval = 5
         self.subtitle_filename = None
         self.thread_handle = None
-        self.download_timeout = 30
+        self.download_timeout = 15
 
     def prepare(self):
         #blow up the subtitle directory 
@@ -68,10 +68,11 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         time_lapsed = 0
         print "thread:__wait_till_subtile_downloaded"
         while cmp(subtitle_list, self.original_list) == 0 and time_lapsed < self.download_timeout :
-            print "wait for %d sec\n" %(self.pooling_interval,),
+            print "has been waiting for %d sec\n" %(time_lapsed,),
             time_lapsed += self.pooling_interval 
             time.sleep(self.pooling_interval)
             subtitle_list = os.listdir(subtitle_download_folder)
+            print subtitle_list, time_lapsed, cmp(subtitle_list, self.original_list), time_lapsed < self.download_timeout
             # print cmp(subtitle_list, self.original_list)
         # print "subtitle has been downloaded", subtitle_list,  
         # TODO:fill subtitle_filename
