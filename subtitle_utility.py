@@ -74,9 +74,10 @@ def main() :
         timeout = args[1]
 
     if os.path.isdir(args[0]):
-        if args[0][-1] is not os.path.sep:
-            args[0] +=  os.path.sep     
-        download_subtitles_in_dir(args[0], timeout)
+        folder_name = args[0]
+        if folder_name[-1] is not os.path.sep:
+            folder_name += os.path.sep     
+        download_subtitles_in_dir(folder_name, timeout)
     if os.path.isfile(args[0]):
         download_subtitle(args[0], timeout)
     print "done!"
