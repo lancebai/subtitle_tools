@@ -23,8 +23,7 @@ def parse_dir():
     parser.add_argument("-t", "--timeout", help="waiting timeout",
                         type=int)
     args = parser.parse_args()
-    if args.dir[-1] is not os.path.sep:
-       args.dir +=  os.path.sep 
+    
     return args.dir, args.timeout
 
 
@@ -36,7 +35,7 @@ def download_subtitles_in_dir(dir_name, timeout):
             # print "ext:", splitext(video_filename)[1]
             if splitext(video_filename)[1] in [".mkv",".avi"]:
                 if os.path.isfile(dir_name+splitext(video_filename)[0]+".ass") or os.path.isfile(dir_name+splitext(video_filename)[0]+".srt") \
-                or os.path.isfile(dir_name+splitext(video_filename)[0]+".ssa"):
+                or os.path.isfile(dir_name+splitext(video_filename)[0]+".ssa") or os.path.isfile(dir_name+splitext(video_filename)[0]+".sub"):
                     print "subtitle exist already, skip"
                 else:
                     print "going to download subtitle:", dir_name+video_filename      
@@ -73,7 +72,13 @@ def main() :
         timeout = 15
     else:
         timeout = args[1]
-    download_subtitles_in_dir(args[0], timeout)
+
+    if os.path.isdir(args[0]):
+        if args[0][-1] is not os.path.sep:
+            args[0] +=  os.path.sep     
+        download_subtitles_in_dir(args[0], timeout)
+    if os.path.isfile(args[0]):
+        download_subtitle(args[0], timeout)
     print "done!"
 
 if __name__ == "__main__":
