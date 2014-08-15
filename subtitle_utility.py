@@ -23,6 +23,8 @@ def parse_dir():
     parser.add_argument("-t", "--timeout", help="waiting timeout",
                         type=int)
     args = parser.parse_args()
+    if args.dir[-1] is not os.path.sep:
+       args.dir +=  os.path.sep 
     return args.dir, args.timeout
 
 
@@ -31,7 +33,14 @@ def download_subtitles_in_dir(dir_name, timeout):
     try:
         file_list = os.listdir(dir_name)
         for video_filename in file_list:
-            download_subtitle(dir_name+video_filename, timeout) 
+            # print "ext:", splitext(video_filename)[1]
+            if splitext(video_filename)[1] in [".mkv",".avi"]:
+                if os.path.isfile(dir_name+splitext(video_filename)[0]+".ass") or os.path.isfile(dir_name+splitext(video_filename)[0]+".srt") \
+                or os.path.isfile(dir_name+splitext(video_filename)[0]+".ssa"):
+                    print "subtitle exist already, skip"
+                else:
+                    print "going to download subtitle:", dir_name+video_filename      
+                    download_subtitle(dir_name+video_filename, timeout) 
     except IOError:
         print "failed to open directory", dir_name, 
     
@@ -46,7 +55,7 @@ def download_subtitle(video_filename, timeout):
         # check_subtitle_folder()
         # fileName, fileExtension = os.path.splitext(downloaded_srt)
         tmp_file = splitext(basename(video_filename))[0] + splitext(downloaded_srt)[1]
-        tmp_file = os.path.dirname(os.path.realpath(video_filename))+ "\\" + tmp_file
+        tmp_file = os.path.dirname(os.path.realpath(video_filename))+ os.path.sep + tmp_file
         copyfile(xmp_downloader.get_downloaded_subtile(), tmp_file)
         xmp_downloader.finish()
         print "going to conver", tmp_file
