@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# -*- coding: UTF-8 -*-  
-# Description: utility to download subtitle and convert it to tradtional chinese
-# 
+# -*- coding: UTF-8 -*-
+# Description: utility to download subtitle and convert it to tradtional chinese.
+#
 #              step 1. play video with xmp player, which will download subtitle to directory
 #                      "C:\Documents and Settings\All Users\Application Data\Thunder Network\XMP4\ProgramData\Subtitle\Online"
 #              step 2 transcode the subtitle we download in step 1 into traditional Chinese
@@ -9,12 +9,14 @@
 #
 
 import os
-from os.path import basename, splitext 
-from subtitle_downloader import *
-from shutil import copyfile 
-from g2butf8 import convertFile
+import sys
+import chardet
 
-test_video = r'c:\dvd\Da.Vincis.Demons.S01E08.720p.HDTV.x264-EVOLVE.mkv'
+from os.path import basename, splitext
+from subtitle_downloader import *
+from shutil import copyfile
+from g2butf8 import convertFile
+from jianfan import jtof
 
 def parse_dir():
     parser = argparse.ArgumentParser()
@@ -23,26 +25,33 @@ def parse_dir():
     parser.add_argument("-t", "--timeout", help="waiting timeout",
                         type=int)
     args = parser.parse_args()
-    
     return args.dir, args.timeout
 
 
 
 def download_subtitles_in_dir(dir_name, timeout):
     try:
-        file_list = os.listdir(dir_name)
+        file_list = os.listdir(dir_name.decode('utf-8'))
         for video_filename in file_list:
             # print "ext:", splitext(video_filename)[1]
+            # print video_filename
             if splitext(video_filename)[1] in [".mkv",".avi"]:
                 if os.path.isfile(dir_name+splitext(video_filename)[0]+".ass") or os.path.isfile(dir_name+splitext(video_filename)[0]+".srt") \
                 or os.path.isfile(dir_name+splitext(video_filename)[0]+".ssa") or os.path.isfile(dir_name+splitext(video_filename)[0]+".sub"):
                     print "subtitle exist already, skip"
                 else:
-                    print "going to download subtitle:", dir_name+video_filename      
-                    download_subtitle(dir_name+video_filename, timeout) 
+                    fan_video_filename = jtof(video_filename)
+                    
+                    # video_filename is simplified chinese, rename the file as tranditional pne 
+                    if fan_video_filename != video_filename:
+                        os.rename(dir_name+video_filename, dir_name+fan_video_filename)
+                        download_subtitle((dir_name+fan_video_filename).encode('big5'), timeout)
+                    else:
+                        download_subtitle((dir_name+video_filename).encode('big5'), timeout) 
     except IOError:
         print "failed to open directory", dir_name, 
-    
+
+
 def download_subtitle(video_filename, timeout):
     xmp_downloader = XmpSubtitleDownloader(video_filename, timeout)
     xmp_downloader.prepare()
