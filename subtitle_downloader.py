@@ -65,6 +65,9 @@ class XmpSubtitleDownloader(SubtitleDownloader):
         self.download_timeout = download_timeout
  
     def prepare(self):
+        from sys import platform as _platform
+        if _platform != "win32":
+            raise "not supported on non Windows platform" 
         #blow up the subtitle directory 
         if os.path.isdir(subtitle_download_folder):
             for subtitle_dir in os.listdir(subtitle_download_folder):
